@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Sun, Building, } from 'lucide-react'
 
-export default function CardInfoWeather() {
+export default function CardFiveDays() {
     return (
         <Card>
             <CardHeader>
