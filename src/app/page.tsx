@@ -10,6 +10,7 @@ import { format } from 'date-fns'
 
 import axios from 'axios'
 import Image from 'next/image'
+import CardCityWeather from '@/components/card-city-weather'
 
 interface FiveDaysWeatherData {
   list: {
@@ -65,8 +66,6 @@ export default function Home() {
   }
 
   function formatData(data: string) {
-    console.log(data, 'valor da data')
-
     return format(new Date(data), 'dd/MM')
   }
 
@@ -87,60 +86,15 @@ export default function Home() {
         </form>
 
         <div className='mt-10 grid grid-cols-1 md:grid-cols-3 w-full md:w-[1200px] bg-violet-50 rounded-xl bg-cover bg-center bg-[url("https://images.unsplash.com/photo-1501987808855-ac803c7bb45e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")]'>
-          <Card
-            className="
-            col-span-2
-            h-[600px] 
-            grid grid-rows-[min-content,1fr,min-content]
-            bg-transparent
-            rounded-none
-            border-none
-            "
-          >
-
-            <CardHeader>
-              <CardTitle>
-                <div className='flex items-center gap-2'>
-                  <p className='text-2xl font-bold'>{weather?.name}</p>
-
-                  <MapPin className="ml-2 h-6 w-6" />
-                </div>
-              </CardTitle>
-
-              <CardDescription>
-                <p className='text-1xl text-zinc-100 font-semibold'>
-                  {weather?.weather[0].description}
-                </p>
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-3">
-            </CardContent>
-
-            <CardFooter className='flex items-center justify-between'>
-              <div className='flex items-center gap-2'>
-                <p className='text-5xl font-semi-bold'>{Math.round(weather?.main.temp as number ?? 0)}°C</p>
-
-                <Image src={`https://openweathermap.org/img/wn/${weather?.weather[0].icon}.png`} alt="Logo" width={70} height={70} />
-              </div>
-
-              <div className='flex flex-col gap-2 text-sm'>
-                <p className='font-semi-bold flex items-center gap-1'>
-                  {weather?.name}
-
-                  <Building className="ml-2 h-4 w-4" />
-                </p>
-
-                <div className='flex items-center gap-4'>
-                  <span>Sensação térmica: {Math.round(weather?.main.feels_like as number ?? 0)}</span>
-
-                  <span>Umidade: {weather?.main.humidity ?? 0}%</span>
-
-                  <span>Pressão: {weather?.main.pressure ?? 0}</span>
-                </div>
-              </div>
-            </CardFooter>
-          </Card>
+          <CardCityWeather
+            name={weather?.name || ''}
+            icon={weather?.weather[0].icon || ''}
+            temp={weather?.main.temp || 0}
+            description={weather?.weather[0].description || ''}
+            feels_like={weather?.main.feels_like || 0}
+            humidity={weather?.main.humidity || 0}
+            pressure={weather?.main.pressure || 0}
+          />
 
           <Card className='h-[600px] backdrop-blur-md col-span-1 bg-transparent rounded-none border-none p-4'>
             <CardHeader className='mt-[-10px]'>
@@ -154,7 +108,7 @@ export default function Home() {
             </CardHeader>
 
             <CardContent className='flex flex-col gap-2'>
-              {fiveDays?.list.slice(0, 5).map((item, index) => (
+              {fiveDays?.list.filter((item, index) => index % 8 === 0).map((item, index) => (
                 <div className='flex flex-col gap-2 border border-zinc-500 rounded-xl p-2 backdrop-blur-none' key={index}>
                   <div className='flex items-center justify-between'>
                     <p className='text-1xl font-bold ml-2'>{formatData(item.dt_txt ?? '')}</p>

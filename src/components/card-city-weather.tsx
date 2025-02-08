@@ -1,39 +1,71 @@
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { Sun, Building, } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Sun, Building, MapPin, } from 'lucide-react'
 import Image from 'next/image'
 
 type CardCityWeatherProps = {
     name: string
     icon: string
+    temp: number
+    description: string
+    feels_like: number
+    humidity: number
+    pressure: number
 }
 
-export default function CardCityWeather({name, icon}: CardCityWeatherProps) {
+export default function CardCityWeather({ name, icon, temp, description, feels_like, humidity, pressure }: CardCityWeatherProps) {
     return (
-        <Card className='w-[600px]'>
+        <Card
+        className="
+        col-span-2
+        h-[600px] 
+        grid grid-rows-[min-content,1fr,min-content]
+        bg-transparent
+        rounded-none
+        border-none
+        "
+        >
+
             <CardHeader>
-                <div className='flex items-center gap-1 p-2'>
-                    <p className='text-2  xl font-bold'>{name}</p>
+                <CardTitle>
+                    <div className='flex items-center gap-2'>
+                        <p className='text-2xl font-bold'>{name}</p>
 
-                    <Image src={`https://openweathermap.org/img/wn/${icon}.png`} alt="Logo" width={40} height={40} />
-                </div>
+                        <MapPin className="ml-2 h-6 w-6" />
+                    </div>
+                </CardTitle>
+
+                <CardDescription>
+                    <p className='text-1xl text-zinc-100 font-semibold'>
+                        {description}
+                    </p>
+                </CardDescription>
             </CardHeader>
-            <CardContent className='flex flex-col gap-1 items-center'>
-                <p className='flex items-center gap-2'>
-                    <Sun className="ml-2 h-6 w-6 text-amber-500" />
-                    26°C
-                </p>
 
-                <span className='text-sm text-muted-foreground'>
-                    Aberto
-                </span>
+            <CardContent className="space-y-3">
             </CardContent>
 
             <CardFooter className='flex items-center justify-between'>
-                <p>Sensação térmica: 26°C</p>
+                <div className='flex items-center gap-2'>
+                    <p className='text-5xl font-semi-bold'>{Math.round(temp ?? 0)}°C</p>
 
-                <p>Umidade: 50%</p>
+                    <Image src={`https://openweathermap.org/img/wn/${icon}.png`} alt="Logo" width={70} height={70} />
+                </div>
 
-                <p>Pressão 1007 hPa</p>
+                <div className='flex flex-col gap-2 text-sm'>
+                    <p className='font-semi-bold flex items-center gap-1'>
+                        {name}
+
+                        <Building className="ml-2 h-4 w-4" />
+                    </p>
+
+                    <div className='flex items-center gap-4'>
+                        <span>Sensação térmica: {Math.round(feels_like ?? 0)}</span>
+
+                        <span>Umidade: {humidity ?? 0}%</span>
+
+                        <span>Pressão: {pressure ?? 0}</span>
+                    </div>
+                </div>
             </CardFooter>
         </Card>
     )
