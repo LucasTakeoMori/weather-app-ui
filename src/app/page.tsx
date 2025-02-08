@@ -1,101 +1,177 @@
-import Image from "next/image";
+"use client"
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Sun, Search, Building, Cloudy, Sparkles, MapPin, CalendarDays, Cloud, CloudRain } from 'lucide-react'
+
+import { format } from 'date-fns'
+
+import axios from 'axios'
+import Image from 'next/image'
+
+interface FiveDaysWeatherData {
+  list: {
+    dt_txt: string,
+    main: {
+      feels_like: number,
+      temp_max: number,
+      temp_min: number
+    },
+    weather: {
+      main: string,
+      description: string,
+      icon: string
+    }[]
+  }[]
+}
+
+interface WeatherData {
+  name: string;
+  main: {
+    feels_like: number;
+    humidity: number;
+    temp: number;
+    pressure: number;
+  }
+  weather: [
+    {
+      main: string;
+      description: string;
+      icon: string;
+    }
+  ];
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [weather, setWeather] = useState<WeatherData>()
+  const [fiveDays, setFiveDays] = useState<FiveDaysWeatherData>()
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  async function handleSearchCity(e: any) {
+    e.preventDefault()
+
+    const city = e.target[0].value
+    const key = "ef9485eefb5b933020ef37e8b8fbbf97"
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&lang=pt_br&units=metric`
+    const url5days = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${key}&lang=pt_br&units=metric`
+
+    const response = await axios.get(url)
+    const responseFiveDays = await axios.get(url5days)
+
+    setWeather(response.data)
+    setFiveDays(responseFiveDays.data)
+  }
+
+  function formatData(data: string) {
+    console.log(data, 'valor da data')
+
+    return format(new Date(data), 'dd/MM')
+  }
+
+  return (
+    <>
+      <main className='flex flex-col min-h-screen items-center mt-32'>
+        <div className='flex gap-2'>
+          <p className='text-2xl font-bold'>Weather App</p>
+          <Sparkles className="ml-2 h-6 w-6 text-amber-500" />
+        </div>
+
+        <form action="" className='flex items-center gap-2 mt-8 w-full md:w-[400px]' onSubmit={(e) => handleSearchCity(e)}>
+          <Input placeholder="Digite o nome da cidade" type="text" className='w-full rounded-xl hover:shadow-amber-500 transition-shadow' />
+
+          <Button type="submit" className='rounded-xl w-14'>
+            <Search />
+          </Button>
+        </form>
+
+        <div className='mt-10 grid grid-cols-1 md:grid-cols-3 w-full md:w-[1200px] bg-violet-50 rounded-xl bg-cover bg-center bg-[url("https://images.unsplash.com/photo-1501987808855-ac803c7bb45e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")]'>
+          <Card
+            className="
+            col-span-2
+            h-[600px] 
+            grid grid-rows-[min-content,1fr,min-content]
+            bg-transparent
+            rounded-none
+            border-none
+            "
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+
+            <CardHeader>
+              <CardTitle>
+                <div className='flex items-center gap-2'>
+                  <p className='text-2xl font-bold'>{weather?.name}</p>
+
+                  <MapPin className="ml-2 h-6 w-6" />
+                </div>
+              </CardTitle>
+
+              <CardDescription>
+                <p className='text-1xl text-zinc-100 font-semibold'>
+                  {weather?.weather[0].description}
+                </p>
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-3">
+            </CardContent>
+
+            <CardFooter className='flex items-center justify-between'>
+              <div className='flex items-center gap-2'>
+                <p className='text-5xl font-semi-bold'>{Math.round(weather?.main.temp as number ?? 0)}°C</p>
+
+                <Image src={`https://openweathermap.org/img/wn/${weather?.weather[0].icon}.png`} alt="Logo" width={70} height={70} />
+              </div>
+
+              <div className='flex flex-col gap-2 text-sm'>
+                <p className='font-semi-bold flex items-center gap-1'>
+                  {weather?.name}
+
+                  <Building className="ml-2 h-4 w-4" />
+                </p>
+
+                <div className='flex items-center gap-4'>
+                  <span>Sensação térmica: {Math.round(weather?.main.feels_like as number ?? 0)}</span>
+
+                  <span>Umidade: {weather?.main.humidity ?? 0}%</span>
+
+                  <span>Pressão: {weather?.main.pressure ?? 0}</span>
+                </div>
+              </div>
+            </CardFooter>
+          </Card>
+
+          <Card className='h-[600px] backdrop-blur-md col-span-1 bg-transparent rounded-none border-none p-4'>
+            <CardHeader className='mt-[-10px]'>
+              <CardTitle>
+                <div className='flex items-center gap-2'>
+                  <p className='text-1xl font-bold'>Previsão dos proximos <span className='ml-1 mr-1'>5</span> dias</p>
+
+                  <CalendarDays className="ml-2 h-6 w-6" />
+                </div>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className='flex flex-col gap-2'>
+              {fiveDays?.list.slice(0, 5).map((item, index) => (
+                <div className='flex flex-col gap-2 border border-zinc-500 rounded-xl p-2 backdrop-blur-none' key={index}>
+                  <div className='flex items-center justify-between'>
+                    <p className='text-1xl font-bold ml-2'>{formatData(item.dt_txt ?? '')}</p>
+
+                    <Image src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`} alt="Logo" width={30} height={30} />
+                  </div>
+
+                  <div className='flex justify-between items-start gap-2 mt-4 ml-2 text-sm'>
+                    <span>{Math.round(item.main.temp_min ?? 0)}°C / {Math.round(item.main.temp_max ?? 0)}°C</span>
+                    <span>{item.weather[0].description}</span>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    </>
+  )
 }
