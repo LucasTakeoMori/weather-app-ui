@@ -15,14 +15,15 @@ type CardCityWeatherProps = {
 export default function CardCityWeather({ name, icon, temp, description, feels_like, humidity, pressure }: CardCityWeatherProps) {
     return (
         <Card
-        className="
-        col-span-2
-        h-[600px] 
-        grid grid-rows-[min-content,1fr,min-content]
-        bg-transparent
-        rounded-none
-        border-none
-        "
+            className="
+            col-span-2
+            h-[350px]
+            md:h-[600px]
+            grid grid-rows-[min-content,1fr,min-content]
+            bg-transparent
+            rounded-none
+            border-none
+            "
         >
 
             <CardHeader>
@@ -44,7 +45,7 @@ export default function CardCityWeather({ name, icon, temp, description, feels_l
             <CardContent className="space-y-3">
             </CardContent>
 
-            <CardFooter className='flex items-center justify-between'>
+            <CardFooter className='flex flex-col md:flex-row first:items-start justify-between'>
                 <div className='flex items-center gap-2'>
                     <p className='text-5xl font-semi-bold'>{Math.round(temp ?? 0)}°C</p>
 
@@ -58,7 +59,7 @@ export default function CardCityWeather({ name, icon, temp, description, feels_l
                         <Building className="ml-2 h-4 w-4" />
                     </p>
 
-                    <div className='flex items-center gap-4'>
+                    <div className='flex items-start md:items-center gap-4'>
                         <span>Sensação térmica: {Math.round(feels_like ?? 0)}</span>
 
                         <span>Umidade: {humidity ?? 0}%</span>
