@@ -71,7 +71,7 @@ export default function Home() {
 
   return (
     <>
-      <main className='flex flex-col min-h-screen items-center mt-32'>
+      <main className='flex flex-col min-h-screen items-start md:items-center mt-10 md:mt-32 p-6'>
         <div className='flex gap-2'>
           <p className='text-2xl font-bold'>Weather App</p>
           <Sparkles className="ml-2 h-6 w-6 text-amber-500" />
@@ -86,17 +86,17 @@ export default function Home() {
         </form>
 
         <div className='mt-10 grid grid-cols-1 md:grid-cols-3 w-full md:w-[1200px] bg-violet-50 rounded-xl bg-cover bg-center bg-[url("https://images.unsplash.com/photo-1501987808855-ac803c7bb45e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")]'>
-          <CardCityWeather
-            name={weather?.name || ''}
-            icon={weather?.weather[0].icon || ''}
-            temp={weather?.main.temp || 0}
-            description={weather?.weather[0].description || ''}
-            feels_like={weather?.main.feels_like || 0}
-            humidity={weather?.main.humidity || 0}
-            pressure={weather?.main.pressure || 0}
+          <CardCityWeather 
+            name={weather?.name ?? ''} 
+            icon={weather?.weather[0].icon ?? ''} 
+            temp={weather?.main.temp ?? 0} 
+            description={weather?.weather[0].description ?? ''} 
+            feels_like={weather?.main.feels_like ?? 0} 
+            humidity={weather?.main.humidity ?? 0} 
+            pressure={weather?.main.pressure ?? 0} 
           />
 
-          <Card className='h-[600px] backdrop-blur-md col-span-1 bg-transparent rounded-none border-none p-4'>
+          <Card className='h-full md:h-[600px] backdrop-blur-md col-span-1 bg-transparent border-none p-4 rounded-xl'>
             <CardHeader className='mt-[-10px]'>
               <CardTitle>
                 <div className='flex items-center gap-2'>
@@ -107,9 +107,9 @@ export default function Home() {
               </CardTitle>
             </CardHeader>
 
-            <CardContent className='flex flex-col gap-2'>
-              {fiveDays?.list.filter((item, index) => index % 8 === 0).map((item, index) => (
-                <div className='flex flex-col gap-2 border border-zinc-500 rounded-xl p-2 backdrop-blur-none' key={index}>
+            <CardContent className='flex items-center flex-col gap-2'>
+              {fiveDays?.list.slice(0, 5).map((item, index) => (
+                <div className='flex flex-col gap-2 border border-zinc-500 rounded-xl p-2 backdrop-blur-none w-[300px] md:w-full' key={index}>
                   <div className='flex items-center justify-between'>
                     <p className='text-1xl font-bold ml-2'>{formatData(item.dt_txt ?? '')}</p>
 
